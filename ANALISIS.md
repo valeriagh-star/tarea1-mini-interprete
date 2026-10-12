@@ -1,15 +1,12 @@
 # Análisis — Tarea 1
 
 **Integrantes:**
-1.
-2.
-3.
+1. García Herrera Valeria
+2. Grajeda Palacios Dulce Abril
+3. Pérez Megchun Pablo de Jesús
 
-**Fork:**
-**Rama:**
-
-> Contesten en este archivo. Respuestas breves y concretas: se califica que
-> hayan entendido, no la extensión.
+**Fork:** https://github.com/valeriagh-star/tarea1-mini-interprete
+**Rama:** tarea1-pruebas-refactorizacion
 
 ---
 
@@ -19,27 +16,29 @@
 
 | Componente | Qué recibe | Qué entrega | De qué es responsable |
 |---|---|---|---|
-| `lexer` | | | |
-| `parser` | | | |
-| `ast` | | | |
-| `evaluator` | | | |
+| `lexer` | Una cadena de texto (`str`) | Una lista de `Token` | Debe partir la entrada en tokens e identificar números, operadores y paréntesis, ignorando espacios. |
+| `parser` | Una lista de `Token` | `Nodo` del AST | Debe construir la estructura jerárquica del árbol aplicando la gramática y la precedencia de operadores. |
+| `ast` | No recibe nada, se limita a definir los tipos de datos que representan los nodos. | Nodos `Numero` y `OperacionBinaria`. | |
+| `evaluator` | `Nodo` del AST | Un número de tipo `int` o `float` | Debe recorrer el AST de manera recursiva para realizar los cálculos y lanzar `ErrorDeEvaluacion` si falla.|
 
 ### 1.2 ¿Qué recorrido sigue una expresión desde que se recibe como texto hasta que produce un resultado?
-
-> Usen `(3 + 4) * 2` como ejemplo y muestren cómo se ve entre etapa y etapa.
 
 | Etapa | Cómo se ve `(3 + 4) * 2` aquí |
 |---|---|
 | texto | `"(3 + 4) * 2"` |
-| tokens | |
-| AST | |
-| resultado | |
+| tokens | `[Token(PAR_IZQ, '(', 0), Token(NUMERO, 3, 1), Token(MAS, '+', 3), Token(NUMERO, 4, 5), Token(PAR_DER, ')', 6), Token(POR, '*', 8), Token(NUMERO, 2, 10)]` |
+| AST | `OperacionBinaria('*', OperacionBinaria('+', Numero(3), Numero(4)), Numero(2))` |
+| resultado | `14` |
 
-> Para el renglón del AST, dibújenlo **primero ustedes** y después comprueben
-> con `python3 interprete.py --arbol "(3 + 4) * 2"`. Si su dibujo y el del
-> programa no coinciden, uno de los dos está mal, y averiguar cuál es
-> justamente el trabajo.
+* Representación en forma de árbol de esta operación: 
 
+```text
+*
+|-- +
+|   |-- 3
+|   `-- 4
+`-- 2
+```
 ---
 
 ## 2. Las pruebas que ya estaban
@@ -48,16 +47,40 @@
 
 | Prueba | Componente | Comportamiento que verifica | ¿Cuántos operadores usa? | ¿Normal, frontera o inválida? |
 |---|---|---|---|---|
-| | | | | |
-
-> Llenen la tabla **completa**, con las 13. Es tediosa a propósito: la única
-> forma de saber qué no está cubierto es caracterizar sistemáticamente lo que
-> sí. Cuando terminen, léanla como columna, no como renglones, y pregúntense
-> qué combinación **no aparece nunca**.
+| `test_lexer.py::test_tokeniza_un_numero_solo` | `lexer` | Reconoce y convierte un entero a un único token. | 0 | Normal |
+| `test_lexer.py::test_tokeniza_una_suma` | `lexer` | Genera la secuencia correcta de tokens para una operación básica sin espacios. | 1 | Normal |
+| `test_lexer.py::test_los_espacios_no_producen_tokens` | `lexer` | Ignora espacios en blanco múltiples alrededor de tokens. | 1 | Frontera |
+| `test_lexer.py::test_tokeniza_parentesis` | `lexer` | Reconoce los símbolos de paréntesis de apertura y cierre. | 0 | Normal |
+| `test_parser.py::test_construye_el_arbol_de_una_suma` | `parser` | Arma la estructura binaria para una suma simple. | 1 | Normal |
+| `test_parser.py::test_la_multiplicacion_se_agrupa_antes_que_la_suma` | `parser` | Respeta la precedencia por defecto agrupando la multiplicación primero. | 2 | Normal |
+| `test_parser.py::test_los_parentesis_cambian_la_agrupacion` | `parser` | Modifica el AST agrupando primero la suma al usar paréntesis. | 2 | Normal |
+| `test_evaluator.py::test_suma` | `evaluator` | Calcula la suma de dos números enteros. | 1 | Normal |
+| `test_evaluator.py::test_resta` | `evaluator` | Calcula la resta de dos números enteros. | 1 | Normal |
+| `test_evaluator.py::test_multiplicacion` | `evaluator` | Calcula la multiplicaión de dos números enteros. | 1 | Normal |
+| `test_evaluator.py::test_division` | `evaluator` | Calcula la división exacta de dos números enteros. | 1 | Normal |
+| `test_evaluator.py::test_precedencia_sin_parentesis` | `evaluator` | Evalúa correctamente la suma y multiplicación sin paréntesis según precedencia. | 2 | Normal |
+| `test_evaluator.py::test_precedencia_con_parentesis` | `evaluator` | Evalúa correctamente cuando los paréntesis alteran el orden natural. | 2 | Normal |
 
 ### 2.2 ¿Qué comportamientos **no** estaban probados?
 
-> Ésta es la pregunta importante de toda la tarea. Tómense su tiempo.
+Al revisar las 13 pruebas que venían en el proyecto, nos dimos cuenta de que faltaban probar los siguientes casos importantes:
+
+1. **Entradas con errores:**
+   * **Errores de Sintaxis:** No existe ninguna prueba que valide el comportamiento del sistema ante expresiones mal compuestas (ej. paréntesis sin cerrar `(3 + 4`, operadores consecutivos `3 ++ 4` o expresiones incompletas `3 +`).
+   * **Errores Lexicográficos:** Tampoco se probó qué ocurre si metes letras o caracteres que el sistema no conoce, como `3 + a` o `3 $ 4`.
+
+2. **Errores de Evaluación en Tiempo de Ejecución:**
+   * **División entre cero:** Aunque el componente `evaluator` contiene una validación para lanzar `ErrorDeEvaluacion` cuando se divide entre cero, no existe ninguna prueba en `test_evaluator.py` que compruebe que esta excepción se dispare correctamente.
+
+3. **Asociatividad de Operadores de Igual Precedencia (Casos Frontera):**
+   * No se prueban cadenas de operadores de la misma prioridad seguidos sin paréntesis (ej. restas encadenadas `10 - 4 - 2` o divisiones encadenadas `12 / 3 / 2`). Esto no permite verificar si la gramática del `parser` asocia correctamente de **izquierda a derecha** o si cae en asociatividad a la derecha.
+
+4. **Operaciones con Flotantes y Tipos de Datos:**
+   * **Resultados Decimales:** Todas las pruebas de división existentes resultan en enteros exactos (`10 / 2 = 5`). No se evalúa el comportamiento cuando la división devuelve un número flotante (ej. `10 / 8 = 1.25`).
+
+5. **Límites de Formato y Sintaxis en el Lexer:**
+   * **Ceros a la Izquierda:** No se valida cómo interpreta el `lexer` números con formato inusual como `007` o `00`.
+   * **Operador Unario Negativo:** No hay pruebas para verificar si el sistema soporta o rechaza números negativos directos como `-5` o `3 * -2`.
 
 ---
 
