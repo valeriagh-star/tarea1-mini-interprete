@@ -6,6 +6,7 @@
 3. Pérez Megchun Pablo de Jesús
 
 **Fork:** https://github.com/valeriagh-star/tarea1-mini-interprete
+
 **Rama:** tarea1-pruebas-refactorizacion
 
 ---
@@ -90,6 +91,14 @@ Al revisar las 13 pruebas que venían en el proyecto, nos dimos cuenta de que fa
 
 | Prueba (archivo::nombre) | Entrada | Esperado | Categoría | ¿Por qué esa categoría? |
 |---|---|---|---|---|
+| `tests/test_parser.py::test_resta_encadenada_asocia_a_la_izquierda` | `"10 - 4 - 2"` | `OperacionBinaria("-", OperacionBinaria("-", Numero(10), Numero(4)), Numero(2))` | Frontera | Evalúa la regla de asociatividad a la izquierda para operadores de igual precedencia. |
+| `tests/test_parser.py::test_expresion_incompleta_lanza_error` | `"3 +"` | Lanza `ErrorDeSintaxis` | Inválido | Falta el operando derecho de la suma, violando la gramática del lenguaje. |
+| `tests/test_parser.py::test_parentesis_sin_cerrar_lanza_error` | `"(3 + 4"` | Lanza `ErrorDeSintaxis` | Inválido | Falta el paréntesis de cierre `)`, dejando la estructura sintáctica incompleta. |
+| `tests/test_parser.py::test_operadores_consecutivos_lanza_error` | `"3 ++ 4"` | Lanza `ErrorDeSintaxis` | Inválido | Dos operadores seguidos sin un operando entre ellos rompen la sintaxis esperada. |
+| | | | | |
+| | | | | |
+| | | | | |
+| | | | | |
 | | | | | |
 
 ---
