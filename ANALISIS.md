@@ -100,6 +100,9 @@ Al revisar las 13 pruebas que venían en el proyecto, nos dimos cuenta de que fa
 | | | | | |
 | | | | | |
 | | | | | |
+| | | | | |
+| | | | | |
+| | | | | |
 
 ---
 
@@ -107,16 +110,25 @@ Al revisar las 13 pruebas que venían en el proyecto, nos dimos cuenta de que fa
 
 ### 4.1 ¿Qué defecto reveló primero una prueba nueva?
 
+El primer defecto revelado por la suite de pruebas fue un problema de asociatividad en el parser (`test_resta_encadenada_asocia_a_la_izquierda`). Al procesar la expresión `"10 - 4 - 2"`, el parser genera una agrupación a la derecha `10 - (4 - 2)` en lugar de asociar hacia la izquierda `(10 - 4) - 2`. 
+
+Además, las pruebas de errores sintácticos revelaron que expresiones incompletas (`"3 +"`) o sin cerrar (`"(3 + 4"`) provocan un fallo no controlado del sistema (`IndexError: list index out of range` en `_avanzar()`) en lugar de lanzar la excepción esperada `ErrorDeSintaxis`.
+
 ### 4.2 ¿Por qué el comportamiento observado era incorrecto?
 
-> No basta con "daba mal". Digan contra qué lo están comparando: qué regla,
-> qué línea de la semántica declarada del README.
+El comportamiento fue incorrecto porque violó directamente tres reglas explícitas de la **Sección 7 (Semántica declarada)** del `README.md`:
+
+1. **Resta encadenada (`"10 - 4 - 2"`):** Rompe la regla del renglón **Asociatividad**, el cual especifica textualmente: *"los operadores de la misma precedencia se asocian a la izquierda"*. El parser agrupaba hacia la derecha (`10 - (4 - 2)`), devolviendo `8` en lugar de `4`.
+2. **Expresiones incompletas y paréntesis sin cerrar (`"3 +"`, `"(3 + 4"`):** Rompe la regla del renglón **Entrada inválida**, que indica: *"debe rechazarse con ErrorDeSintaxis, nunca con un error de Python"*. El parser dejó propagar un `IndexError: list index out of range` al intentar leer más allá del arreglo de tokens.
+3. **Carácter no reconocido (`"3 $ 4"`):** También violó el renglón **Entrada inválida** (*"debe rechazarse con ErrorDeSintaxis"*), ya que el lexer no capturaba el símbolo ajeno a la gramática ni lanzaba la excepción correspondiente.
 
 ### 4.3 ¿Qué cambio realizaron?
 
 | Defecto | Entrada que lo revela | Daba | Debería dar | Commit rojo | Commit verde |
 |---|---|---|---|---|---|
-| | | | | | |
+| Asociatividad a la derecha en restas encadenadas. | `"10 - 4 - 2"` | `OperacionBinaria("-", Numero(10), OperacionBinaria("-", Numero(4), Numero(2)))` | `OperacionBinaria("-", OperacionBinaria("-", Numero(10), Numero(4)), Numero(2))` | `37ffaf4` | `ec5a04d` |
+| Desbordamiento de lista en expresiones incompletas o paréntesis sin cerrar. | `"3 +"` / `"(3 + 4"` | `IndexError: list index out of range` | Lanza `ErrorDeSintaxis` | `37ffaf4` | `ec5a04d` |
+| Carácter no reconocido no es capturado como sintaxis inválida. | `"3 $ 4"` | No lanza excepción (`Failed: DID NOT RAISE ErrorDeSintaxis`) | Lanza `ErrorDeSintaxis` | `eb8d488` | *(pendiente)* |
 
 ### 4.4 ¿Cómo saben que la corrección es general y no sólo hace pasar ese ejemplo?
 
