@@ -132,6 +132,16 @@ El comportamiento fue incorrecto porque violó directamente tres reglas explíci
 
 ### 4.4 ¿Cómo saben que la corrección es general y no sólo hace pasar ese ejemplo?
 
+Sabemos que la solución es general porque arreglamos la forma en que el programa procesa las reglas en lugar de solo parchear los ejemplos específicos de las pruebas:
+
+1. **Parser (Asociatividad y errores de sintaxis):**  
+   * **Para las operaciones encadenadas:** En lugar de procesar solo dos números, usamos ciclos que van agrupando los elementos de izquierda a derecha sin importar cuántas restas o sumas seguidas haya (por ejemplo, funciona igual para `"10 - 4 - 2"` que para `"20 - 5 - 3 - 2 - 1"`).
+   * **Para las expresiones incompletas:** Antes de intentar leer el siguiente token, el parser ahora revisa si ya se acabó la entrada. Si nota que falta algo (como en `"3 +"` o `"(3 + 4"`), se detiene y lanza `ErrorDeSintaxis` de forma limpia, evitando que Python truene con un error feo de desbordamiento de lista (`IndexError`).
+
+2. **Lexer (Caracteres no reconocidos):**  
+   * En lugar de brincarse los símbolos extraños y continuar como si nada, el lexer ahora revisa cualquier carácter no reconocido en su regla por defecto. Si encuentra algo que no es un número, un espacio o un operador válido (`$`, `@`, letras, etc.), se detiene inmediatamente y lanza `ErrorDeSintaxis`. Esto funciona para cualquier símbolo raro y en cualquier posición de la cadena.
+
+3. **Prueba final:** Lo confirmamos porque al correr `pytest`, no solo pasaron los casos nuevos, sino que las 25 pruebas del proyecto pasaron en verde juntas sin romper nada de lo que ya funcionaba.
 ---
 
 ## 5. Diseño
