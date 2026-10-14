@@ -1,4 +1,5 @@
 """Pruebas del parser: de los tokens al AST."""
+
 import pytest
 from mini_interprete.errores import ErrorDeSintaxis
 from mini_interprete.ast import Numero, OperacionBinaria
