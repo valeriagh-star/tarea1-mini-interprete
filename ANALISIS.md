@@ -97,7 +97,7 @@ Al revisar las 13 pruebas que venían en el proyecto, nos dimos cuenta de que fa
 | `tests/test_parser.py::test_operadores_consecutivos_lanza_error` | `"3 ++ 4"` | Lanza `ErrorDeSintaxis` | Inválido | Dos operadores seguidos sin un operando entre ellos rompen la sintaxis esperada. |
 | `tests/test_lexer.py::test_ceros_a_la_izquierda_se_convierten_a_entero` | `"007"` | `Token(NUMERO, 7, 0)` | Frontera | Verifica el caso límite en el que un entero viene precedido de ceros a la izquierda sin alterar su valor final. |
 | `tests/test_lexer.py::test_caracter_invalido_lanza_error_de_sintaxis` | `"3 $ 4"` | Lanza `ErrorDeSintaxis` | Inválido | Símbolos fuera del alfabeto/tokens permitidos por el lexer deben rechazarse inmediatamente. |
-| | | | | |
+| `tests/test_lexer.py::test_tokeniza_multiplicacion_y_division` | `"6 * 2 / 3"` | Lista de 5 tokens válidos | Normal | Verifica la tokenización estándar de expresiones con multiplicación y división secuencial. |
 | | | | | |
 | | | | | |
 | | | | | |
