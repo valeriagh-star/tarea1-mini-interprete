@@ -128,7 +128,7 @@ El comportamiento fue incorrecto porque violó directamente tres reglas explíci
 |---|---|---|---|---|---|
 | Asociatividad a la derecha en restas encadenadas. | `"10 - 4 - 2"` | `OperacionBinaria("-", Numero(10), OperacionBinaria("-", Numero(4), Numero(2)))` | `OperacionBinaria("-", OperacionBinaria("-", Numero(10), Numero(4)), Numero(2))` | `37ffaf4` | `ec5a04d` |
 | Desbordamiento de lista en expresiones incompletas o paréntesis sin cerrar. | `"3 +"` / `"(3 + 4"` | `IndexError: list index out of range` | Lanza `ErrorDeSintaxis` | `37ffaf4` | `ec5a04d` |
-| Carácter no reconocido no es capturado como sintaxis inválida. | `"3 $ 4"` | No lanza excepción (`Failed: DID NOT RAISE ErrorDeSintaxis`) | Lanza `ErrorDeSintaxis` | `eb8d488` | *(pendiente)* |
+| Carácter no reconocido no es capturado como sintaxis inválida. | `"3 $ 4"` | No lanza excepción (`Failed: DID NOT RAISE ErrorDeSintaxis`) | Lanza `ErrorDeSintaxis` | `eb8d488` | `4204132` |
 
 ### 4.4 ¿Cómo saben que la corrección es general y no sólo hace pasar ese ejemplo?
 
