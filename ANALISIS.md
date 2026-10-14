@@ -98,11 +98,11 @@ Al revisar las 13 pruebas que venían en el proyecto, nos dimos cuenta de que fa
 | `tests/test_lexer.py::test_ceros_a_la_izquierda_se_convierten_a_entero` | `"007"` | `Token(NUMERO, 7, 0)` | Frontera | Verifica el caso límite en el que un entero viene precedido de ceros a la izquierda sin alterar su valor final. |
 | `tests/test_lexer.py::test_caracter_invalido_lanza_error_de_sintaxis` | `"3 $ 4"` | Lanza `ErrorDeSintaxis` | Inválido | Símbolos fuera del alfabeto/tokens permitidos por el lexer deben rechazarse inmediatamente. |
 | `tests/test_lexer.py::test_tokeniza_multiplicacion_y_division` | `"6 * 2 / 3"` | Lista de 5 tokens válidos | Normal | Verifica la tokenización estándar de expresiones con multiplicación y división secuencial. |
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+| `tests/test_evaluator.py::test_evalua_resta_y_suma_combinadas` | `"10 - 3 + 2"` | `9` | Normal | Comprueba la evaluación estándar de operaciones mixtas de igual precedencia. |
+| `tests/test_evaluator.py::test_division_real_con_flotante` | `"10 / 4"` | `2.5` | Normal | Verifica la regla de semántica declarada donde toda división debe retornar un número decimal real (`float`). |
+| `tests/test_evaluator.py::test_evalua_expresion_combinada_con_parentesis` | `"(2 + 3) * 4"` | `20` | Normal | Comprueba la correcta evaluación de una expresión con combinación de operadores y paréntesis. |
+| `tests/test_evaluator.py::test_division_por_cero_lanza_error_de_evaluacion` | `"10 / 0"` | Lanza `ErrorDeEvaluacion` | Inválido | La división entre cero es indefinida y debe capturarse como un error del dominio del intérprete. |
+| `tests/test_evaluator.py::test_menos_unario_no_soportado_lanza_error` | `"-3"` | Lanza `ErrorDeSintaxis` | Inválido / Frontera | Verifica que expresiones con signo unario sean rechazadas ya que la gramática solo soporta operadores binarios. |
 
 ---
 
