@@ -55,23 +55,21 @@ class Parser:
         self.pos += 1
         return token
 
-    def _expresion(self):
-        nodo = self._termino()
-        # Se cambia 'if' por 'while' para asociar a la izquierda de forma iterativa
-        while self._actual() is not None and self._actual().tipo in OPERADORES_SUMA:
+    # REFACTORIZACIÓN POR DUPLICACIÓN: tanto _expresion como _termino hacen lo mismo, solo que con distintos operadores.
+    # Por eso se extrae la lógica común a un método privado _operacion_binaria para evitar repetir código y facilitar el mantenimiento.
+    def _operacion_binaria(self, funcion_siguiente, operadores_permitidos):
+        nodo = funcion_siguiente()
+        while self._actual() is not None and self._actual().tipo in operadores_permitidos:
             operador = self._avanzar()
-            derecha = self._termino()
+            derecha = funcion_siguiente()
             nodo = OperacionBinaria(operador.valor, nodo, derecha)
         return nodo
 
+    def _expresion(self):
+        return self._operacion_binaria(self._termino, OPERADORES_SUMA)
+
     def _termino(self):
-        nodo = self._factor()
-        # Se cambia 'if' por 'while' para asociar a la izquierda de forma iterativa
-        while self._actual() is not None and self._actual().tipo in OPERADORES_PRODUCTO:
-            operador = self._avanzar()
-            derecha = self._factor()
-            nodo = OperacionBinaria(operador.valor, nodo, derecha)
-        return nodo
+        return self._operacion_binaria(self._factor, OPERADORES_PRODUCTO)
 
     def _factor(self):
         token = self._avanzar()
