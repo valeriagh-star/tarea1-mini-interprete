@@ -148,13 +148,32 @@ Sabemos que la solución es general porque arreglamos la forma en que el program
 
 ### 5.1 ¿Qué duplicación o señal de mal diseño encontraron?
 
-> Al menos dos. Usen el vocabulario de clase: duplicación, rigidez,
-> acoplamiento alto, condicionales repetidos, amplificación del cambio.
+Identificamos tres señales principales de mal diseño en la estructura inicial:
+
+1. **Error de asociatividad y duplicación en el Parser:**  
+   En la versión inicial de `parser.py`, los métodos `_expresion` y `_termino` usaban condicionales `if` con llamadas recursivas a sí mismos (`derecha = self._expresion()`), lo que agrupaba las operaciones a la derecha de forma incorrecta (ej. `10 - 4 - 2` se evaluaba como `10 - (4 - 2)`). Además, ambos métodos repetían exactamente la misma estructura de código para procesar sus respectivos operadores.
+
+2. **Condicionales repetidos / Rigidez:**  
+   En `evaluator.py`, la función `evaluar` utilizaba una cadena de `if` para cada operador (`+`, `-`, `*`, `/`). Para agregar una nueva operación, era obligatorio modificar el código interno de la función.
+
+3. **Acoplamiento alto:**  
+   La información de los operadores está "repartida" en 4 archivos diferentes (`tokens.py`, `lexer.py`, `parser.py` y `evaluator.py`). Esto hace que cualquier cambio simple, como agregar un nuevo símbolo, obligue a ir editando archivo por archivo en lugar de hacerlo en un solo lugar.
+
+---
 
 ### 5.2 ¿Qué refactorización realizaron, y por qué conserva el comportamiento?
 
-> "Las pruebas siguen pasando" es parte de la respuesta, pero no toda.
-> ¿Por qué el cambio es equivalente?
+**Refactorizaciones realizadas:**
+* **En `parser.py`:** Cambiamos el `if` recursivo por un ciclo `while` para que las operaciones como restas o divisiones encadenadas se agrupen correctamente de izquierda a derecha. Después, para no repetir ese mismo ciclo en `_expresion` y `_termino`, pasamos esa lógica a un método general llamado `_operacion_binaria`.
+* **En `evaluator.py`:** En lugar de usar una lista larga de `if` para cada operador, agrupamos las operaciones en un mapa/diccionario (`OPERACIONES`) que conecta cada símbolo (`+`, `-`, `*`, `/`) directamente con su función.
+
+**¿Por qué conserva el comportamiento?**
+* El cambio al ciclo `while` hace que expresiones como `10 - 4 - 2` se calculen como `(10 - 4) - 2 = 4`, que es el resultado aritmético correcto, en lugar de agrupar hacia la derecha.
+* Reorganizar el código con `_operacion_binaria` y el mapa de operaciones no cambia la forma en que el programa trabaja por dentro: el árbol de la expresión (AST) se construye exactamente igual y las operaciones regresan los mismos valores.
+
+Todas las 25 pruebas del proyecto siguen pasando en verde.
+
+---
 
 ### 5.3 ¿Sería pertinente usar Factory Method, Adapter o ninguno?
 
