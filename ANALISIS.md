@@ -185,6 +185,13 @@ Todas las 25 pruebas del proyecto siguen pasando en verde.
 
 > Por ejemplo `%`. ¿Cuántos archivos hay que tocar? ¿Por qué?
 
+Para agregar un operador nuevo (como `%`), actualmente se deben modificar **4 archivos**:
+1. `tokens.py`: Agregar la variante al enum `TipoToken`.
+2. `lexer.py`: Registrar el carácter en `SIMBOLOS`.
+3. `parser.py`: Incluir el token en la tupla de operadores correspondiente (`OPERADORES_SUMA` o `OPERADORES_PRODUCTO`).
+4. `evaluator.py`: Agregar el comportamiento del operador en el diccionario `OPERACIONES`.
+
+La principal dificultad reside en el **acoplamiento inherente de la gramática**, ya que siempre se requiere declarar la precedencia y la categoría del nuevo token en la etapa de parseo.
 ---
 
 ## Antes de la declaración: inténtenlo primero ustedes
