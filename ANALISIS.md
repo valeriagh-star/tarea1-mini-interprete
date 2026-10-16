@@ -177,9 +177,16 @@ Todas las 25 pruebas del proyecto siguen pasando en verde.
 
 ### 5.3 ¿Sería pertinente usar Factory Method, Adapter o ninguno?
 
-> Justifiquen. **"Ninguno" puede ser la respuesta correcta.** Si dicen que sí,
-> digan qué problema concreto resuelve y qué costo tiene. Si dicen que no,
-> digan qué tendría que cambiar en el sistema para que empezara a convenir.
+**Respuesta: Ninguno por el momento.**
+
+* **Factory Method:** No es pertinente porque los nodos del AST (`Numero`, `OperacionBinaria`) y los `Token` son clases de datos simples. No existe una lógica de instanciación compleja que justifique una fábrica.
+* **Adapter:** Tampoco es pertinente porque no estamos conectando librerías externas con interfaces incompatibles; todo el sistema se diseñó de forma nativa para trabajar en conjunto.
+
+**¿Qué tendría que cambiar en el sistema para que empezara a convenir?**
+* **Factory Method** convendría si el lenguaje se expandiera para instanciar tipos de nodos dinámicos según configuraciones externas o plugins.
+* **Adapter** convendría si quisiéramos integrar un *lexer* o *parser* externo para adaptar sus salidas a la estructura que requiere `evaluator.py`.
+
+---
 
 ### 5.4 ¿Qué parte del sistema sería más difícil de modificar si se agregara un operador nuevo?
 
