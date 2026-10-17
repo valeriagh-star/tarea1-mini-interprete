@@ -190,53 +190,12 @@ Todas las 25 pruebas del proyecto siguen pasando en verde.
 
 ### 5.4 ¿Qué parte del sistema sería más difícil de modificar si se agregara un operador nuevo?
 
-> Por ejemplo `%`. ¿Cuántos archivos hay que tocar? ¿Por qué?
-
 Para agregar un operador nuevo (como `%`), actualmente se deben modificar **4 archivos**:
 1. `tokens.py`: Agregar la variante al enum `TipoToken`.
 2. `lexer.py`: Registrar el carácter en `SIMBOLOS`.
 3. `parser.py`: Incluir el token en la tupla de operadores correspondiente (`OPERADORES_SUMA` o `OPERADORES_PRODUCTO`).
 4. `evaluator.py`: Agregar el comportamiento del operador en el diccionario `OPERACIONES`.
 
-La principal dificultad reside en el **acoplamiento inherente de la gramática**, ya que siempre se requiere declarar la precedencia y la categoría del nuevo token en la etapa de parseo.
----
-
-## Antes de la declaración: inténtenlo primero ustedes
-
-Usar IA o no es decisión de cada quien, y el curso la permite. Pero **les
-pedimos, por favor, que primero hagan el análisis por su cuenta.**
-
-No es una prueba de honestidad. Es que el orden cambia lo que aprenden:
-
-1. **Primero ustedes.** Lean el código, corran las pruebas, escriban sus
-   respuestas. Aunque queden incompletas, aunque no encuentren todo.
-
-2. **Después, si quieren, la IA** — pero como contraste, no como sustituto.
-   Y entonces contesten dos preguntas, en `DECLARACION_IA.md`:
-
-   - **¿Qué encontró que ustedes no habían notado?**
-     Eso es aprendizaje, y se declara sin ninguna pena.
-
-   - **¿Qué *no* encontró, que en este curso sí consideramos un problema?**
-     Ésta es la interesante. Una herramienta suele decir que el código
-     "funciona bien" y no señalar, por ejemplo, la **duplicación** — porque
-     duplicar no rompe nada, el programa corre igual. Pero ustedes ya saben
-     por qué eso sí es un mal diseño, y saben nombrarlo. La herramienta no
-     tomó esa clase.
-
-> Si invierten el orden se pierden justamente lo segundo: **no se puede notar
-> lo que a una herramienta le faltó si uno nunca se formó una opinión propia
-> antes de preguntarle.** Y que un programa funcione no implica que esté bien
-> diseñado — eso lo dijimos en clase mucho antes de esta tarea.
+El detalle principal es el **acoplamiento** que hay entre las partes del sistema: como la sintaxis y la lógica están divididas por etapas, no hay forma de evitar ir al parser para definir en qué nivel de la gramática entra el nuevo operador para que respete la jerarquía de operaciones.
 
 ---
-
-## Declaración de uso de Inteligencia Artificial
-
-Va en `DECLARACION_IA.md`, no aquí. Es obligatoria, pero **no da ni quita
-puntos**: es un reporte adicional que se revisa aparte y se les devuelve con
-comentarios.
-
-**No se evalúa cuánta IA usaron.** Se evalúa si pueden dar cuenta de lo que
-entregaron. *"No usamos"* es una declaración válida y completa; *"lo
-descartamos porque..."* es de las mejores respuestas posibles.
