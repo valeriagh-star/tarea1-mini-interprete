@@ -1,5 +1,7 @@
 """Pruebas del parser: de los tokens al AST."""
 
+import pytest
+from mini_interprete.errores import ErrorDeSintaxis
 from mini_interprete.ast import Numero, OperacionBinaria
 from mini_interprete.lexer import tokenizar
 from mini_interprete.parser import Parser
@@ -25,3 +27,31 @@ def test_los_parentesis_cambian_la_agrupacion():
     assert arbol_de("(3 + 4) * 2") == OperacionBinaria(
         "*", OperacionBinaria("+", Numero(3), Numero(4)), Numero(2)
     )
+
+# PRUEBA EN ROJO (Frontera - Asociatividad a la izquierda)
+def test_resta_encadenada_asocia_a_la_izquierda():
+    """Verifica que 10 - 4 - 2 se agrupe como (10 - 4) - 2."""
+    assert arbol_de("10 - 4 - 2") == OperacionBinaria(
+        "-",
+        OperacionBinaria("-", Numero(10), Numero(4)),
+        Numero(2)
+    )
+
+
+# PRUEBAS DE ERRORES SINTÁCTICOS (Casos Inválidos)
+def test_expresion_incompleta_lanza_error():
+    """Verifica que una expresión como '3 +' pida un operando faltante."""
+    with pytest.raises(ErrorDeSintaxis):
+        arbol_de("3 +")
+
+
+def test_parentesis_sin_cerrar_lanza_error():
+    """Verifica que un paréntesis sin cerrar '(3 + 4' marque error de sintaxis."""
+    with pytest.raises(ErrorDeSintaxis):
+        arbol_de("(3 + 4")
+
+
+def test_operadores_consecutivos_lanza_error():
+    """Verifica que dos operadores juntos '3 ++ 4' lancen un error de sintaxis."""
+    with pytest.raises(ErrorDeSintaxis):
+        arbol_de("3 ++ 4")

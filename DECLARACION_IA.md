@@ -1,20 +1,19 @@
 # Declaración de uso de Inteligencia Artificial
 
-**Actividad:**
+**Actividad:** Tarea 1
+
 **Integrantes:**
-**Fecha:**
+1. García Herrera Valeria
+2. Grajeda Palacios Dulce Abril
+3. Pérez Megchun Pablo de Jesús
 
-> Esta declaración es obligatoria en toda tarea, práctica y en el proyecto final.
-> **No da ni quita puntos**: es un reporte adicional que se revisa aparte y se
-> devuelve con comentarios. **No se evalúa cuánta IA usaron**, sino si pueden
-> dar cuenta de lo que entregaron.
-
+**Fecha:** 16 de octubre de 2026
 ---
 
 ## 0. ¿Se usó IA en esta actividad?
 
 - [ ] **No.** Firmen la última sección y terminen. Con eso queda completa.
-- [ ] **Sí.** Contesten los cinco puntos.
+- [ ✔ ] **Sí.** Contesten los cinco puntos.
 
 ---
 
@@ -22,10 +21,8 @@
 
 | Herramienta | Versión o modelo, si lo saben |
 |---|---|
-| | |
-
-> Cuenta también el autocompletado del editor (Copilot y similares). Si sólo
-> fue eso, basta con decirlo en un renglón y seguir al punto 4.
+| Google Gemini | Flash (asistencia en chat) |
+| GitHub Copilot | Extensión autocompletado en Visual Studio Code |
 
 ---
 
@@ -33,24 +30,32 @@
 
 | Para qué la usamos | En qué parte del entregable |
 |---|---|
-| | |
-
-> Sean específicos. *"Para la tarea"* no dice nada.
-> *"Para generar las pruebas de `minimo_de_llaves`"* sí.
+| Autocompletado rápido de sintaxis e impresiones durante la edición. | En el editor Visual Studio Code al modificar los archivos `.py` |
+| Asesoría para la redacción técnica de los incisos. | Respuestas de la Sección 4.3 en `ANALISIS.md`, en la sección 4.3 porque no sabíamos cómo representar los commits o qué deberíamos poner en esos rubros, y en secciones como 4.4, 5.1 y 5.2  solo para redactar mejor las respuestas. |
+| Asistencia técnica para el uso de Git (comandos para subir cambios, uso de `--amend` y resolución de conflictos). | Flujo de trabajo en la terminal local. |
 
 ---
 
 ## 3. Prompts principales
 
-Textuales, tal como los escribieron. No los limpien ni los reescriban.
-
 ```
 (prompt 1)
 ```
+No entiendo qué debemos poner en los apartados de Commit rojo y Commit verde, explica: ### 4.3 ¿Qué cambio realizaron? 
+
+ | Defecto | Entrada que lo revela | Daba | Debería dar | Commit rojo | Commit verde | 
+ |---|---|---|---|---|---| 
+ | | | | | | | 
 
 ```
 (prompt 2)
 ```
+Se está usando Windows, al cambiar a terminal bash en Visual Studio y querer subir los commits de las pruebas realizadas, nos dice que no reconoce los comandos, qué debemos hacer?
+
+```
+(prompt 3)
+```
+Subimos un commit pero lo describimos mal, cómo podemos cambiarle el nombre?
 
 ---
 
@@ -60,13 +65,16 @@ Textuales, tal como los escribieron. No los limpien ni los reescriban.
 
 | Qué produjo la herramienta | ¿Aceptado, modificado o descartado? | Por qué | Dónde quedó (archivo / commit) |
 |---|---|---|---|
-| | | | |
-
-> **"Lo descartamos" es una respuesta excelente**, si dicen por qué.
-> Una declaración donde todo se aceptó sin cambios es una declaración que
-> no muestra criterio.
+| Autocompletado inicial de Copilot usando `if` en `_expresion` | **Descartado** | Mantenía la asociatividad a la derecha y calculaba mal operaciones encadenadas como `10 - 4 - 2`. | `src/mini_interprete/parser.py` |
+| Abstracción del método `_operacion_binaria` con un ciclo `while` | **Aceptado** | Se aceptó para eliminar código duplicado y fijar la asociatividad a la izquierda. | `src/mini_interprete/parser.py` |
+| Estructura del mapa `OPERACIONES` con funciones lambda. | **Aceptado con modificaciones** | Nos sirvió para quitar los `if` repetidos del evaluador; le ajustamos el estilo para que quedara más limpio y legible. | `src/mini_interprete/evaluator.py` |
+| Comandos para Git (`git commit --amend`, `git push --force-with-lease`) y solución de Path en Bash. | **Aceptado** | Nos permitió solucionar el problema con los comandos no reconocidos en la terminal de VS Code y mantener limpio el historial. | Flujo de trabajo en la terminal local |
+| Explicación sobre qué poner en los incisos de Commit Rojo y Commit Verde | **Aceptado con modificaciones** | Nos ayudó a entender el concepto del flujo TDD para redactar las tablas del análisis con nuestras propias palabras. | `ANALISIS.md` |
+---
 
 ### 4.1 Si la usaron para el análisis: el contraste
+
+**NO APLICA**
 
 Se les pidió intentarlo primero por su cuenta. Si lo hicieron así:
 
@@ -74,17 +82,11 @@ Se les pidió intentarlo primero por su cuenta. Si lo hicieron así:
 |---|---|
 | ¿Qué encontró la herramienta que ustedes **no** habían notado? | |
 | ¿Qué **no** encontró, que en este curso sí consideramos un problema? | |
-
-> La segunda es la que más nos interesa. Una herramienta suele no señalar la
-> duplicación de código, porque el programa funciona igual. Ustedes ya saben
-> por qué eso sí importa.
->
-> Si no usaron IA para el análisis, escriban *"no aplica"*.
+---
 
 ### 4.2 ¿Cómo verificaron que lo que incorporaron era correcto?
 
-> Una prueba que escribieron, una ejecución, un contraste contra las notas de
-> clase o contra el enunciado. *"Lo revisamos"* no es una verificación.
+Corrimos la suite de pruebas automáticas ejecutando el comando `pytest` y `pytest -v` en la terminal de VS Code después de cada cambio en el código. Verificamos que las 25 pruebas pasaran en verde, poniendo especial atención en las pruebas de asociatividad a la izquierda (como `10 - 4 - 2 = 4`) para asegurarnos de que la refactorización con el ciclo `while` en `parser.py` no hubiera cambiado la lógica del intérprete. De igual manera, confirmamos que la evaluación de los operadores (+, -, *, /) siguiera respondiendo correctamente tras reemplazar los `if` repetidos por el diccionario `OPERACIONES` en `evaluator.py`, garantizando que no se rompiera el comportamiento original.
 
 ---
 
@@ -92,11 +94,13 @@ Se les pidió intentarlo primero por su cuenta. Si lo hicieron así:
 
 ### 5.1 ¿Qué limitación concreta observaron **en esta actividad**?
 
-> Concreta. No *"a veces se equivoca"*, sino *"propuso pruebas sólo para
-> m = 4 y nunca para órdenes impares, porque no conocía la definición del
-> laboratorio"*.
+Observamos que la herramienta no identificó la duplicación de código entre `_expresion` y `_termino` en el parser; al generar o autocompletar el código, daba la solución por correcta porque sintácticamente funcionaba, pasando por alto que ambos métodos compartían exactamente el mismo comportamiento. Además, las sugerencias de Copilot en VS Code tendían a perpetuar el patrón con `if` recursivos sin advertir que esto rompía la asociatividad a la izquierda en operaciones encadenadas como `10 - 4 - 2`.
+
+---
 
 ### 5.2 ¿Qué harían distinto la próxima vez?
+
+Seríamos más minuciosos al revisar el código línea por línea antes de integrarlo, fijándonos tanto en la indentación de Python como en no mantener estructuras redundantes solo porque "ya funcionan". De hecho, consideramos que para refactorizaciones estructurales como la eliminación de duplicación o la aplicación de patrones, es mucho mejor analizar y realizar los cambios directamente nosotros mismos desde el principio, utilizando las herramientas solo para consultas puntuales o sintácticas.
 
 ---
 
@@ -107,4 +111,6 @@ Se les pidió intentarlo primero por su cuenta. Si lo hicieron así:
 
 | Nombre | Número de cuenta |
 |---|---|
-| | |
+| García Herrera Valeria | 323284819 |
+| Grajeda Palacios Dulce Abril | 323300120 |
+| Pérez Megchun Pablo de Jesús | 426008701 |

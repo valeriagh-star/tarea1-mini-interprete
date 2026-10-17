@@ -8,6 +8,21 @@ from .ast import Numero, OperacionBinaria
 from .errores import ErrorDeEvaluacion
 
 
+def _dividir(a, b):
+    if b == 0:
+        raise ErrorDeEvaluacion("division entre cero")
+    return a / b
+
+
+# Mapa de funciones por operador para evitar condicionales repetidos
+OPERACIONES = {
+    "+": lambda a, b: a + b,
+    "-": lambda a, b: a - b,
+    "*": lambda a, b: a * b,
+    "/": _dividir,
+}
+
+
 def evaluar(nodo):
     """Evalua un nodo del AST y regresa su valor."""
     if isinstance(nodo, Numero):
@@ -17,16 +32,8 @@ def evaluar(nodo):
         izquierda = evaluar(nodo.izquierda)
         derecha = evaluar(nodo.derecha)
 
-        if nodo.operador == "+":
-            return izquierda + derecha
-        if nodo.operador == "-":
-            return izquierda - derecha
-        if nodo.operador == "*":
-            return izquierda * derecha
-        if nodo.operador == "/":
-            if derecha == 0:
-                raise ErrorDeEvaluacion("division entre cero")
-            return izquierda / derecha
+        if nodo.operador in OPERACIONES:
+            return OPERACIONES[nodo.operador](izquierda, derecha)
 
         raise ErrorDeEvaluacion(f"operador desconocido: {nodo.operador!r}")
 
